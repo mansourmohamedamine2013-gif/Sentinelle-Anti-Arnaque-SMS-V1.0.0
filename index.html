@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+<meta name="theme-color" content="#0b1020">
+<meta name="description" content="Sentinelle Anti-Arnaque : analysez instantanément un SMS, un appel ou un lien suspect. 100% hors-ligne, aucune donnée envoyée.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sentinelle">
+<title>Sentinelle — Anti-Arnaque</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+
+<header class="appbar" id="appbar">
+  <div class="appbar-in">
+    <div class="brand">
+      <svg class="brand-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.8 20 5v6.2c0 5-3.4 9.4-8 10.9-4.6-1.5-8-5.9-8-10.9V5l8-3.2Zm0 4.1a1.35 1.35 0 0 0-1.35 1.35v3.4a1.35 1.35 0 0 0 2.7 0v-3.4A1.35 1.35 0 0 0 12 5.9Zm0 9.2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"/></svg>
+      <div>
+        <h1>Sentinelle</h1>
+        <p class="tagline">Anti-arnaque · hors-ligne</p>
+      </div>
+    </div>
+    <div class="appbar-actions">
+      <button class="iconbtn" id="btn-install" title="Installer l'application" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v8.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.42l2.3 2.3V4a1 1 0 0 1 1-1Zm-7 13a1 1 0 0 1 1 1v2h12v-2a1 1 0 1 1 2 0v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1Z"/></svg>
+      </button>
+      <button class="iconbtn" id="btn-privacy" title="Confidentialité" aria-label="Confidentialité">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 4 5.2v6.1c0 4.9 3.4 9.2 8 10.7 4.6-1.5 8-5.8 8-10.7V5.2L12 2Zm-1 5h2v6h-2V7Zm0 8h2v2h-2v-2Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <!-- ===================== ANALYSER ===================== -->
+  <section class="page active" id="page-analyser" role="tabpanel" aria-label="Analyser un message">
+    <div class="hero">
+      <h2>Un message douteux&nbsp;?</h2>
+      <p>Collez-le ici. Sentinelle l'analyse <strong>sur votre téléphone</strong>, sans internet et sans envoyer le moindre octet.</p>
+    </div>
+
+    <div class="card">
+      <label class="lbl" for="sender">Expéditeur <span class="opt">(numéro ou nom affiché)</span></label>
+      <input id="sender" class="ipt" type="text" inputmode="tel" autocomplete="off" spellcheck="false"
+             placeholder="Ex : +33 6 12 34 56 78, 33700, AMELI, MonBanquier…">
+      <div class="sender-hint" id="sender-hint"></div>
+
+      <label class="lbl" for="msg">Message reçu</label>
+      <textarea id="msg" class="ipt ta" rows="7" autocomplete="off"
+        placeholder="Collez ici le SMS, le message WhatsApp ou l'e-mail reçu…&#10;&#10;Astuce : sur Android, appuyez longuement sur le message → Copier, puis collez ici."></textarea>
+      <div class="row-between">
+        <span class="counter" id="counter">0 caractère</span>
+        <div class="row">
+          <button class="btn ghost sm" id="btn-paste" type="button">📋 Coller</button>
+          <button class="btn ghost sm" id="btn-clear" type="button">Effacer</button>
+        </div>
+      </div>
+
+      <div class="chips" id="quick-samples" aria-label="Exemples à tester">
+        <span class="chips-lbl">Tester un exemple&nbsp;:</span>
+      </div>
+
+      <button class="btn primary big" id="btn-analyze" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 4 5.2v6.1c0 4.9 3.4 9.2 8 10.7 4.6-1.5 8-5.8 8-10.7V5.2L12 2Zm3.3 6.2-4.2 4.2-1.7-1.7-1.4 1.4 3.1 3.1 5.6-5.6-1.4-1.4Z"/></svg>
+        Analyser maintenant
+      </button>
+      <p class="fineprint">Analyse locale · aucune donnée transmise · fonctionne sans connexion</p>
+    </div>
+
+    <div id="result" class="result" hidden></div>
+
+    <div class="card mini-tools">
+      <h3 class="card-title">Outils rapides</h3>
+      <div class="grid2">
+        <div>
+          <label class="lbl" for="link-input">Vérifier un lien</label>
+          <input id="link-input" class="ipt" type="text" spellcheck="false" placeholder="https://…">
+          <button class="btn sm" id="btn-link" type="button">Analyser le lien</button>
+        </div>
+        <div>
+          <label class="lbl" for="num-input">Vérifier un numéro</label>
+          <input id="num-input" class="ipt" type="text" inputmode="tel" spellcheck="false" placeholder="+33 6 …, 33700, 0899…">
+          <button class="btn sm" id="btn-num" type="button">Analyser le numéro</button>
+        </div>
+      </div>
+      <div id="mini-result"></div>
+    </div>
+  </section>
+
+  <!-- ===================== JOURNAL ===================== -->
+  <section class="page" id="page-journal" role="tabpanel" aria-label="Journal">
+    <div class="hero"><h2>Votre journal</h2><p>Historique local de vos analyses et vos listes de numéros.</p></div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="card">
+      <div class="row-between">
+        <h3 class="card-title">Analyses récentes</h3>
+        <div class="row">
+          <button class="btn ghost sm" id="btn-export" type="button">⬇ Exporter</button>
+          <button class="btn ghost sm danger" id="btn-clear-journal" type="button">Vider</button>
+        </div>
+      </div>
+      <div id="journal-list" class="journal"></div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">⭐ Numéros de confiance</h3>
+      <p class="hint">Numéros dont vous êtes certain (votre banque, votre médecin, un proche). Ils allègent le score des prochains messages.</p>
+      <div class="row"><input id="wl-input" class="ipt flex1" type="text" placeholder="Nom ou numéro"><button class="btn sm" id="btn-wl-add" type="button">Ajouter</button></div>
+      <div id="wl-list" class="taglist"></div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">⛔ Numéros signalés</h3>
+      <p class="hint">Les arnaqueurs identifiés. Tout message venant de ces numéros sera immédiatement classé en alerte maximale.</p>
+      <div class="row"><input id="bl-input" class="ipt flex1" type="text" placeholder="Numéro ou nom"><button class="btn sm" id="btn-bl-add" type="button">Ajouter</button></div>
+      <div id="bl-list" class="taglist"></div>
+    </div>
+  </section>
+
+  <!-- ===================== GUIDE ===================== -->
+  <section class="page" id="page-guide" role="tabpanel" aria-label="Guide">
+    <div class="hero"><h2>Se protéger</h2><p>Les 10 règles d'or, les arnaques les plus courantes, et qui appeler en cas de problème.</p></div>
+
+    <div class="card">
+      <h3 class="card-title">🔟 Les 10 règles d'or</h3>
+      <ol class="rules" id="rules-list"></ol>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">🎭 Les 10 arnaques les plus répandues</h3>
+      <div id="types-list"></div>
+    </div>
+
+    <div class="card urgent-card">
+      <h3 class="card-title">🚨 J'ai déjà cliqué ou payé — que faire&nbsp;?</h3>
+      <ol class="steps" id="emergency-steps"></ol>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">📞 Numéros et sites utiles</h3>
+      <div class="seg" id="country-seg" role="tablist"></div>
+      <div id="directory-list"></div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">👵 Protéger un proche</h3>
+      <div id="protect-list"></div>
+    </div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section class="page" id="page-quiz" role="tabpanel" aria-label="Entraînement">
+    <div class="hero"><h2>Entraînement</h2><p>12 messages réels. Saurez-vous repérer l'arnaque&nbsp;? Idéal pour les parents et grands-parents.</p></div>
+    <div class="card" id="quiz-card"></div>
+    <div class="card" id="quiz-score-card"></div>
+  </section>
+</main>
+
+<nav class="tabbar" role="tablist" aria-label="Navigation principale">
+  <button class="tab active" data-page="analyser" role="tab" aria-selected="true">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 4 5.2v6.1c0 4.9 3.4 9.2 8 10.7 4.6-1.5 8-5.8 8-10.7V5.2L12 2Zm-1 5.6h2v5h-2v-5Zm0 6.8h2v2h-2v-2Z"/></svg>
+    <span>Analyser</span>
+  </button>
+  <button class="tab" data-page="journal" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 3h11a3 3 0 0 1 3 3v15H8a3 3 0 0 1-3-3V3Zm2 2v11h9V5H7Zm0 13v1a1 1 0 0 0 1 1h9v-2H7Z"/></svg>
+    <span>Journal</span>
+  </button>
+  <button class="tab" data-page="guide" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h7a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H4V4Zm16 0h-7a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H20V4Z"/></svg>
+    <span>Guide</span>
+  </button>
+  <button class="tab" data-page="quiz" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-.2 14.8a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6Zm1.9-5.6c-.6.5-.9.9-.9 1.6v.5h-1.7v-.7c0-1.2.5-2 1.5-2.7.7-.5 1-1 1-1.6a1.6 1.6 0 0 0-3.2-.2H8.7a3.3 3.3 0 0 1 6.6.4c0 1.2-.5 2.1-1.6 2.7Z"/></svg>
+    <span>Quiz</span>
+  </button>
+</nav>
+
+<!-- Modale confidentialité -->
+<div class="modal" id="modal-privacy" hidden>
+  <div class="modal-bd" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+    <h3 id="privacy-title">🔒 Vos données ne quittent jamais ce téléphone</h3>
+    <ul class="tick">
+      <li><strong>Aucune connexion internet requise.</strong> L'application fonctionne en mode avion.</li>
+      <li><strong>Aucun serveur, aucun compte, aucune inscription.</strong></li>
+      <li><strong>Les messages analysés ne sont jamais transmis.</strong> L'analyse se fait par un moteur de règles exécuté localement.</li>
+      <li><strong>Votre journal est stocké uniquement sur votre appareil</strong> (stockage local du navigateur). Vous pouvez l'effacer à tout moment.</li>
+      <li><strong>Aucun traceur, aucune publicité, aucune statistique tierce.</strong></li>
+      <li><strong>Code source ouvert</strong> : vous pouvez vérifier chaque règle de détection.</li>
+    </ul>
+    <p class="hint">⚠️ Sentinelle est un outil d'aide à la décision. Il réduit fortement le risque mais ne remplace pas votre jugement. En cas de doute sur un paiement, contactez directement votre banque au numéro figurant <em>au dos de votre carte</em>.</p>
+    <button class="btn primary big" id="btn-close-privacy" type="button">J'ai compris</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/kb.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
