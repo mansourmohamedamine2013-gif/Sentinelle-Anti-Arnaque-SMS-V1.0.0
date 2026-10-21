@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="theme-color" content="#0b1020">
+<meta name="description" content="Sentinelle Anti-Arnaque : analysez instantanément un SMS, un appel ou un lien suspect. 100% hors-ligne, aucune donnée envoyée.">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Sentinelle — Anti-Arnaque</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/intro.css">
+</head>
+<body>
+<!-- ================= Animation d'ouverture (APK) =================
+     Superposition jouée au lancement : css/intro.css (chronologie),
+     js/intro.js (fin / appui pour passer). Masquée automatiquement. -->
+<div class="si-root" id="si-root" role="presentation" aria-hidden="true">
+  <div class="si-blob b1"></div>
+  <div class="si-blob b2"></div>
+  <div class="si-star" style="left:11%;top:80%;animation-delay:.1s"></div>
+  <div class="si-star" style="left:24%;top:66%;animation-delay:1.2s"></div>
+  <div class="si-star" style="left:38%;top:88%;animation-delay:2.1s"></div>
+  <div class="si-star" style="left:52%;top:72%;animation-delay:.7s"></div>
+  <div class="si-star" style="left:66%;top:84%;animation-delay:1.7s"></div>
+  <div class="si-star" style="left:78%;top:68%;animation-delay:2.6s"></div>
+  <div class="si-star" style="left:88%;top:79%;animation-delay:.4s"></div>
+  <div class="si-star" style="left:46%;top:58%;animation-delay:2.9s"></div>
+  <div class="si-dim"></div>
+  <div class="si-stage">
+    <div class="si-logo">
+      <div class="si-tile"><img src="icons/icon-192.png" alt="" aria-hidden="true"></div>
+      <div class="si-ring"></div>
+      <div class="si-ring r2"></div>
+      <div class="si-ring r3"></div>
+    </div>
+    <h1 class="si-title">
+      <span class="si-word" aria-label="Sentinelle"><i style="--i:0">S</i><i style="--i:1">E</i><i style="--i:2">N</i><i style="--i:3">T</i><i style="--i:4">I</i><i style="--i:5">N</i><i style="--i:6">E</i><i style="--i:7">L</i><i style="--i:8">L</i><i style="--i:9">E</i></span>
+      <span class="si-sub">ANTI-ARNAQUE SMS</span>
+    </h1>
+
+  </div>
+  <div class="si-skip"></div>
+</div>
+<a class="skip" href="#main" data-i18n="app.skip">Aller au contenu</a>
+
+<header class="appbar" id="appbar">
+  <div class="appbar-in">
+    <div class="brand">
+      <img class="brand-ico" src="icons/icon-96.png" alt="" aria-hidden="true">
+      <div>
+        <h1 data-i18n="app.name">Sentinelle</h1>
+        <p class="tagline" data-i18n="app.tagline">Anti-arnaque · hors-ligne</p>
+      </div>
+    </div>
+      <div class="appbar-actions">
+      <div class="appbar-langs">
+        <label class="visually-hidden" for="quick-language" data-i18n="settings.lang.title">Langue</label>
+        <select id="quick-language" class="lang-select" aria-label="Langue" data-i18n-attr="aria-label:settings.lang.title">
+          <option value="fr">🇫🇷 Français</option><option value="en">🇬🇧 English</option>
+          <option value="ar">🇲🇦 العربية</option><option value="es">🇪🇸 Español</option>
+          <option value="ru">🇷🇺 Русский</option><option value="zh-CN">🇨🇳 简体中文</option>
+        </select>
+      </div>
+      <button class="iconbtn" id="btn-install" title="Installer l'application" hidden data-i18n-attr="title:install.button;aria-label:install.button" aria-label="Installer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v8.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.42l2.3 2.3V4a1 1 0 0 1 1-1Zm-7 13a1 1 0 0 1 1 1v2h12v-2a1 1 0 1 1 2 0v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1Z"/></svg>
+      </button>
+      <button class="iconbtn" id="btn-privacy" title="Confidentialité" aria-label="Confidentialité" data-i18n-attr="title:settings.about.privacy;aria-label:settings.about.privacy">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 4 5.2v6.1c0 4.9 3.4 9.2 8 10.7 4.6-1.5 8-5.8 8-10.7V5.2L12 2Zm-1 5h2v6h-2V7Zm0 8h2v2h-2v-2Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <!-- ===================== ANALYSER ===================== -->
+  <section class="page active" id="page-analyser" role="tabpanel" aria-label="Analyser un message" data-i18n-attr="aria-label:nav.page.analyser">
+    <div class="hero">
+      <h2 data-i18n="analyze.hero.title">Un message douteux&nbsp;?</h2>
+      <p data-i18n-html="analyze.hero.text">Collez-le ici. Sentinelle l'analyse <strong>sur votre téléphone</strong>, sans internet et sans envoyer le moindre octet.</p>
+      <p id="detection-coverage" class="detection-note" role="note" hidden></p>
+    </div>
+
+    <div class="card">
+      <label class="lbl" for="sender"><span data-i18n="analyze.sender.label">Expéditeur</span> <span class="opt" data-i18n="analyze.sender.opt">(numéro ou nom affiché)</span></label>
+      <input id="sender" class="ipt" type="text" inputmode="tel" autocomplete="off" spellcheck="false"
+             placeholder="Ex : +33 6 12 34 56 78, 33700, AMELI, MonBanquier…" data-i18n-attr="placeholder:analyze.sender.placeholder">
+      <div class="sender-hint" id="sender-hint"></div>
+
+      <label class="lbl" for="msg" data-i18n="analyze.msg.label">Message reçu</label>
+      <textarea id="msg" class="ipt ta" rows="7" autocomplete="off"
+        placeholder="Collez ici le SMS, le message WhatsApp ou l'e-mail reçu…&#10;&#10;Astuce : sur Android, appuyez longuement sur le message → Copier, puis collez ici." data-i18n-attr="placeholder:analyze.msg.placeholder"></textarea>
+      <div class="row-between">
+        <span class="counter" id="counter" data-i18n-live="counter">0 caractère</span>
+        <div class="row">
+          <button class="btn ghost sm" id="btn-paste" type="button" data-i18n="analyze.paste">📋 Coller</button>
+          <button class="btn ghost sm" id="btn-clear" type="button" data-i18n="analyze.clear">Effacer</button>
+        </div>
+      </div>
+
+      <div class="chips" id="quick-samples" aria-label="Exemples à tester" data-i18n-attr="aria-label:analyze.samples.aria">
+        <span class="chips-lbl" data-i18n="analyze.samples.label">Tester un exemple&nbsp;:</span>
+      </div>
+
+      <button class="btn primary big" id="btn-analyze" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 4 5.2v6.1c0 4.9 3.4 9.2 8 10.7 4.6-1.5 8-5.8 8-10.7V5.2L12 2Zm3.3 6.2-4.2 4.2-1.7-1.7-1.4 1.4 3.1 3.1 5.6-5.6-1.4-1.4Z"/></svg>
+        <span data-i18n="analyze.button">Analyser maintenant</span>
+      </button>
+      <p class="fineprint" data-i18n="analyze.fineprint">Analyse locale · aucune donnée transmise · fonctionne sans connexion</p>
+    </div>
+
+    <div id="result" class="result" hidden></div>
+
+    <div class="card mini-tools">
+      <h3 class="card-title" data-i18n="tools.title">Outils rapides</h3>
+      <div class="grid2">
+        <div>
+          <label class="lbl" for="link-input" data-i18n="tools.link.label">Vérifier un lien</label>
+          <input id="link-input" class="ipt" type="text" spellcheck="false" placeholder="https://…" data-i18n-attr="placeholder:tools.link.placeholder">
+          <button class="btn sm" id="btn-link" type="button" data-i18n="tools.link.button">Analyser le lien</button>
+        </div>
+        <div>
+          <label class="lbl" for="num-input" data-i18n="tools.num.label">Vérifier un numéro</label>
+          <input id="num-input" class="ipt" type="text" inputmode="tel" spellcheck="false" placeholder="+33 6 …, 33700, 0899…" data-i18n-attr="placeholder:tools.num.placeholder">
+          <button class="btn sm" id="btn-num" type="button" data-i18n="tools.num.button">Analyser le numéro</button>
+        </div>
+      </div>
+      <div id="mini-result"></div>
+    </div>
+  </section>
+
+  <!-- ===================== JOURNAL ===================== -->
+  <section class="page" id="page-journal" role="tabpanel" aria-label="Journal" data-i18n-attr="aria-label:nav.page.journal">
+    <div class="hero"><h2 data-i18n="journal.hero.title">Votre journal</h2><p data-i18n="journal.hero.text">Historique local de vos analyses et vos listes de numéros.</p></div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="card">
+      <div class="row-between">
+        <h3 class="card-title" data-i18n="journal.recent">Analyses récentes</h3>
+        <div class="row">
+          <button class="btn ghost sm" id="btn-export" type="button" data-i18n="journal.export">⬇ Exporter</button>
+          <button class="btn ghost sm danger" id="btn-clear-journal" type="button" data-i18n="journal.clear">Vider</button>
+        </div>
+      </div>
+      <div id="journal-list" class="journal"></div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title" data-i18n="journal.trusted.title">⭐ Numéros de confiance</h3>
+      <p class="hint" data-i18n="journal.trusted.hint">Numéros dont vous êtes certain (votre banque, votre médecin, un proche). Ils allègent le score des prochains messages.</p>
+      <div class="row"><input id="wl-input" class="ipt flex1" type="text" placeholder="Nom ou numéro" data-i18n-attr="placeholder:journal.trusted.placeholder"><button class="btn sm" id="btn-wl-add" type="button" data-i18n="common.add">Ajouter</button></div>
+      <div id="wl-list" class="taglist"></div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title" data-i18n="journal.blocked.title">⛔ Numéros signalés</h3>
+      <p class="hint" data-i18n="journal.blocked.hint">Les arnaqueurs identifiés. Tout message venant de ces numéros sera immédiatement classé en alerte maximale.</p>
+      <div class="row"><input id="bl-input" class="ipt flex1" type="text" placeholder="Numéro ou nom" data-i18n-attr="placeholder:journal.blocked.placeholder"><button class="btn sm" id="btn-bl-add" type="button" data-i18n="common.add">Ajouter</button></div>
+      <div id="bl-list" class="taglist"></div>
+    </div>
+  </section>
+
+  <!-- ===================== GUIDE ===================== -->
+  <section class="page" id="page-guide" role="tabpanel" aria-label="Guide" data-i18n-attr="aria-label:nav.page.guide">
+    <div class="hero"><h2 data-i18n="guide.hero.title">Se protéger</h2><p data-i18n="guide.hero.text">Les 10 règles d'or, les arnaques les plus courantes, et qui appeler en cas de problème.</p></div>
+
+    <div class="card">
+      <h3 class="card-title" data-i18n="guide.rules.title">🔟 Les 10 règles d'or</h3>
+      <ol class="rules" id="rules-list"></ol>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title" data-i18n="guide.types.title">🎭 Les 10 arnaques les plus répandues</h3>
+      <div id="types-list"></div>
+    </div>
+
+    <div class="card urgent-card">
+      <h3 class="card-title" data-i18n="guide.emergency.title">🚨 J'ai déjà cliqué ou payé — que faire&nbsp;?</h3>
+      <ol class="steps" id="emergency-steps"></ol>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title" data-i18n="guide.directory.title">📞 Numéros et sites utiles</h3>
+      <div class="seg" id="country-seg" role="tablist"></div>
+      <div id="directory-list"></div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title" data-i18n="guide.protect.title">👵 Protéger un proche</h3>
+      <div id="protect-list"></div>
+    </div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section class="page" id="page-quiz" role="tabpanel" aria-label="Entraînement" data-i18n-attr="aria-label:nav.page.quiz">
+    <div class="hero"><h2 data-i18n="quiz.hero.title">Entraînement</h2><p data-i18n="quiz.hero.text">12 messages réels. Saurez-vous repérer l'arnaque&nbsp;? Idéal pour les parents et grands-parents.</p></div>
+    <div class="card" id="quiz-card"></div>
+    <div class="card" id="quiz-score-card"></div>
+  </section>
+
+  <!-- ===================== PARAMÈTRES ===================== -->
+  <section class="page" id="page-parametres" role="tabpanel" aria-label="Paramètres" data-i18n-attr="aria-label:nav.page.parametres">
+    <div class="hero">
+      <h2 data-i18n="settings.hero.title">Paramètres</h2>
+      <p data-i18n="settings.hero.text">Langue, code de sécurité et données. Tout est enregistré sur ce téléphone uniquement.</p>
+    </div>
+
+    <!-- ---------- Langue ---------- -->
+    <div class="card">
+      <h3 class="card-title" data-i18n="settings.lang.title">🌍 Langue</h3>
+      <p class="hint" data-i18n="settings.lang.hint">Choisissez la langue de l'application. Le changement est immédiat et reste mémorisé.</p>
+      <div class="langlist" id="lang-list" role="radiogroup" aria-labelledby="lang-list-title">
+        <span id="lang-list-title" class="visually-hidden" data-i18n="settings.lang.title">Langue</span>
+      </div>
+      <p class="fineprint" id="lang-detection-note"></p>
+    </div>
+
+    <!-- ---------- Sécurité ---------- -->
+    <div class="card">
+      <div class="row-between">
+        <h3 class="card-title" data-i18n="settings.security.title">🔒 Code de sécurité</h3>
+        <span class="statuspill" id="pin-status">—</span>
+      </div>
+      <p class="hint" id="pin-hint"></p>
+      <div class="row" id="pin-actions"></div>
+    </div>
+
+    <!-- ---------- Données ---------- -->
+    <div class="card">
+      <h3 class="card-title" data-i18n="settings.data.title">🗂️ Données</h3>
+      <p class="hint" data-i18n="settings.data.hint">Vos analyses, vos listes de numéros et vos réglages sont stockés dans le stockage local de ce téléphone. Rien n'est envoyé ailleurs.</p>
+      <div class="kv-list" id="data-counts"></div>
+      <div class="row wrap" style="margin-top:12px">
+        <button class="btn ghost sm" id="btn-settings-export" type="button" data-i18n="settings.data.export">⬇ Exporter mes données</button>
+        <button class="btn ghost sm" id="btn-settings-import" type="button" data-i18n="settings.data.import">⬆ Importer une sauvegarde</button>
+        <input type="file" id="import-file" accept="application/json,.json" hidden>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn ghost sm danger" id="btn-settings-reset" type="button" data-i18n="settings.data.reset">🗑️ Tout effacer et réinitialiser</button>
+      </div>
+    </div>
+
+    <!-- ---------- À propos ---------- -->
+    <div class="card">
+      <h3 class="card-title" data-i18n="settings.about.title">ℹ️ À propos</h3>
+      <div class="kv-list" id="about-list"></div>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== ÉCRAN DE CODE PIN =====================
+     Injecté en fin de <body> : il doit recouvrir toute l'application,
+     y compris la barre d'onglets. Le contenu est généré par js/pin.js
+     afin d'être traduit dynamiquement (un écran de code figé en français
+     serait inutilisable pour un non-francophone au tout premier lancement). -->
+<div id="pin-screen" class="pin-screen" hidden aria-live="assertive"></div>
+
+<!-- Voile opaque masquant le contenu tant que le code n'est pas saisi.
+     Sans lui, le texte de l'app reste lisible dans le DOM (et visible à
+     l'écran si le CSS de l'overlay échoue). -->
+<div id="pin-veil" class="pin-veil" hidden></div>
+
+<nav class="tabbar" role="tablist" aria-label="Navigation principale" data-i18n-attr="aria-label:nav.main">
+  <button class="tab active" data-page="analyser" role="tab" aria-selected="true" data-i18n-attr="aria-label:nav.analyser">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 4 5.2v6.1c0 4.9 3.4 9.2 8 10.7 4.6-1.5 8-5.8 8-10.7V5.2L12 2Zm-1 5.6h2v5h-2v-5Zm0 6.8h2v2h-2v-2Z"/></svg>
+    <span data-i18n="nav.analyser">Analyser</span>
+  </button>
+  <button class="tab" data-page="journal" role="tab" aria-selected="false" data-i18n-attr="aria-label:nav.journal">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 3h11a3 3 0 0 1 3 3v15H8a3 3 0 0 1-3-3V3Zm2 2v11h9V5H7Zm0 13v1a1 1 0 0 0 1 1h9v-2H7Z"/></svg>
+    <span data-i18n="nav.journal">Journal</span>
+  </button>
+  <button class="tab" data-page="guide" role="tab" aria-selected="false" data-i18n-attr="aria-label:nav.guide">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h7a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H4V4Zm16 0h-7a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H20V4Z"/></svg>
+    <span data-i18n="nav.guide">Guide</span>
+  </button>
+  <button class="tab" data-page="quiz" role="tab" aria-selected="false" data-i18n-attr="aria-label:nav.quiz">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-.2 14.8a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6Zm1.9-5.6c-.6.5-.9.9-.9 1.6v.5h-1.7v-.7c0-1.2.5-2 1.5-2.7.7-.5 1-1 1-1.6a1.6 1.6 0 0 0-3.2-.2H8.7a3.3 3.3 0 0 1 6.6.4c0 1.2-.5 2.1-1.6 2.7Z"/></svg>
+    <span data-i18n="nav.quiz">Quiz</span>
+  </button>
+  <button class="tab" data-page="parametres" role="tab" aria-selected="false" data-i18n-attr="aria-label:nav.parametres">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 8.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8Zm0 1.9a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm9.1 2.7c0-.5 0-.9-.1-1.4l2-1.5-2-3.4-2.3 1a7.6 7.6 0 0 0-2.4-1.4L15.9 3H8.1l-.4 2.5c-.8.3-1.6.8-2.4 1.4l-2.3-1-2 3.4 2 1.5a9 9 0 0 0 0 2.8l-2 1.5 2 3.4 2.3-1c.7.6 1.5 1 2.4 1.4l.4 2.5h7.8l.4-2.5c.8-.3 1.6-.8 2.4-1.4l2.3 1 2-3.4-2-1.5c.1-.5.1-.9.1-1.4Z"/></svg>
+    <span data-i18n="nav.parametres">Paramètres</span>
+  </button>
+</nav>
+
+<!-- Modale confidentialité -->
+<div class="modal" id="modal-privacy" hidden>
+  <div class="modal-bd" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+    <h3 id="privacy-title" data-i18n="privacy.title">🔒 Vos données ne quittent jamais ce téléphone</h3>
+    <ul class="tick">
+      <li data-i18n-html="privacy.1"><strong>Aucune connexion internet requise.</strong> L'application fonctionne en mode avion.</li>
+      <li data-i18n-html="privacy.2"><strong>Aucun serveur, aucun compte, aucune inscription.</strong></li>
+      <li data-i18n-html="privacy.3"><strong>Les messages analysés ne sont jamais transmis.</strong> L'analyse se fait par un moteur de règles exécuté localement.</li>
+      <li data-i18n-html="privacy.4"><strong>Votre journal est stocké uniquement sur votre appareil</strong> (stockage local du navigateur). Vous pouvez l'effacer à tout moment.</li>
+      <li data-i18n-html="privacy.5"><strong>Votre code de sécurité est haché localement.</strong> Sentinelle ne peut pas le lire, ni vous le renvoyer.</li>
+      <li data-i18n-html="privacy.6"><strong>Aucun traceur, aucune publicité, aucune statistique tierce.</strong></li>
+      <li data-i18n-html="privacy.7"><strong>Code source ouvert</strong> : vous pouvez vérifier chaque règle de détection.</li>
+    </ul>
+    <p class="hint" data-i18n-html="privacy.warning">⚠️ Sentinelle est un outil d'aide à la décision. Il réduit fortement le risque mais ne remplace pas votre jugement. En cas de doute sur un paiement, contactez directement votre banque au numéro figurant <em>au dos de votre carte</em>.</p>
+    <button class="btn primary big" id="btn-close-privacy" type="button" data-i18n="common.understood">J'ai compris</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Ordre de chargement imposé :
+     1. i18n.js            → le registre (aucun texte)
+     2. locales/*.js       → chaque langue s'enregistre dans le registre
+     3. kb.js, engine.js   → la connaissance et le moteur (libellés par clé)
+     4. pin.js             → le verrou, indépendant de l'app
+     5. app.js             → l'application, qui amorce i18n puis le verrou -->
+<!-- version.js est GÉNÉRÉ par build.js depuis package.json : il doit être
+     chargé AVANT app.js, qui lit window.SENTINELLE_VERSION. -->
+<script src="js/intro.js"></script>
+<script src="js/version.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/locales/fr.js"></script>
+<script src="js/locales/en.js"></script>
+<script src="js/locales/ar.js"></script>
+<script src="js/locales/es.js"></script>
+<script src="js/locales/ru.js"></script>
+<script src="js/locales/zh-CN.js"></script>
+<script src="js/locales/ui-extra.js"></script>
+<script src="js/kb.js"></script>
+<script src="js/locales/ar-tr.js"></script>
+<script src="js/locales/content.js"></script>
+<script src="js/locales/es-content.js"></script>
+<script src="js/locales/ru-content.js"></script>
+<script src="js/locales/zh-CN-content.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/caller-id.js"></script>
+<script src="js/pin.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
